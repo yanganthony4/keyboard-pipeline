@@ -1,7 +1,7 @@
 from src.extract.apify_reddit_build_extractor import fetch_posts_hour
 
 def main():
-    posts = fetch_posts_hour()
+    posts = fetch_posts_hour(2, "day")
 
     print(posts)
     print(len(posts))

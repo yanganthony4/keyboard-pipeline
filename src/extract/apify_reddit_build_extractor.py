@@ -14,7 +14,7 @@ def get_author_comments(item: list) -> list:
     author_comments = []
     for comment in item:
         if comment.get("isSubmitter") == True:
-            author_comments.append(comment)
+            author_comments.append(comment.get("body"))
     return author_comments
 
 def normalize_post(item: dict) -> dict:
@@ -30,8 +30,13 @@ def normalize_post(item: dict) -> dict:
         "author_comments": get_author_comments(item.get("topComments"))
     }
 
-def fetch_posts_hour() -> list[dict]:
-    run = client.task(TASK_ID).call()
+def fetch_posts(max_results, time_filter) -> list[dict]:
+    run = client.task(TASK_ID).call(
+        task_input = {
+            "timeFilter": time_filter,
+            "maxResults": max_results
+        }
+    )
 
     dataset_id = run.default_dataset_id
 
@@ -43,5 +48,7 @@ def fetch_posts_hour() -> list[dict]:
         raw_posts.append(normalize_post(item))
 
     return raw_posts
+
+
 
 
