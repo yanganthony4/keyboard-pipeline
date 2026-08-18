@@ -61,7 +61,7 @@ def get_product_links(URL) -> list:
                            !== old_link;
                 }
                 """,
-                old_first_link
+                arg=old_first_link
             )
 
         browser.close()
@@ -104,7 +104,7 @@ def extract_switch_data() -> list[dict]:
             price_locator = page.locator('p.text-3xl', has_text = "$")
             price = (price_locator.inner_text().strip() if price_locator.count() > 0 else None)
             
-            prose_locator = page.locator('div.prose.prose-sm.max-w-none.text-muted-foreground.transition-all.duration-300')
+            prose_locator = page.locator('div.prose')
             prose = (prose_locator.inner_text().strip() if prose_locator.count() > 0 else None)
 
             switch_type = feel = actuation = travel_dist = pins = fac_lubed = None
@@ -154,15 +154,14 @@ def extract_switch_data() -> list[dict]:
 
 def extract_keycap_data() -> list[dict]:
     print(f"Retrieving keycap data...")
-    product_links = get_product_links("https://keebarchive.com/keycaps")
+    keycap_links = get_product_links("https://keebarchive.com/keycaps")
     keycaps = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
 
-
-        for link in product_links:
+        for link in keycap_links:
             full_url = BASE_URL + link
             page.goto(full_url)
 
@@ -186,7 +185,7 @@ def extract_keycap_data() -> list[dict]:
             price_locator = page.locator('p.text-3xl', has_text = "$")
             price = (price_locator.inner_text().strip() if price_locator.count() > 0 else None)
             
-            prose_locator = page.locator('div.prose.prose-sm.max-w-none.text-muted-foreground.transition-all.duration-300')
+            prose_locator = page.locator('div.prose')
             prose = (prose_locator.inner_text().strip() if prose_locator.count() > 0 else None)
             
             for i in range(tech_spec_divs.count()):
@@ -206,7 +205,7 @@ def extract_keycap_data() -> list[dict]:
                     number_of_keys = spans.nth(1).inner_text().strip()
                 
 
-            product = {
+            keycap = {
                 "source": "keebarchive",
                 "source_url": full_url,
                 "extracted_at": datetime.now(timezone.utc).isoformat(),
@@ -220,11 +219,11 @@ def extract_keycap_data() -> list[dict]:
                 "artisan": artisan
             }
 
-            keycaps.append(product)
+            keycaps.append(keycap)
+            i += 1
         browser.close()
     print(f"Keycap Count: {len(keycaps)}")
     return keycaps
-
 
 
             
