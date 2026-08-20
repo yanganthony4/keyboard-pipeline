@@ -1,6 +1,14 @@
 from playwright.sync_api import sync_playwright
 from datetime import datetime, timezone
 
+from src.database.connection import get_connection
+from src.database.raw import (
+    create_scrape_run,
+    create_source_record,
+    complete_scrape_run,
+    fail_scrape_run,
+)
+
 BASE_URL = "https://keebarchive.com"
 
 SWITCH_TITLE_BLACK_LIST = [

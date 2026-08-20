@@ -74,7 +74,7 @@ def get_keyboard_links() -> list[dict]:
 
                     "title": title,
                     "price": None,
-                    "profile": profile,
+                    "keyboard_profile": profile,
                     "wired": wired,
                     "wireless": wireless,
                     "hotswap": hotswap,

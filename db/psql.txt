@@ -1,0 +1,28 @@
+docker exec -it keyboard-postgres psql -U keyboard_admin -d keyboard_db
+
+\dt schema.*
+\d schema.table
+
+CREATE TABLE raw.keebarchive_switches (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    scrape_run_id BIGINT,
+
+    source_url TEXT NOT NULL,
+    source_product_id TEXT,
+
+    extracted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    title TEXT NOT NULL,
+    price TEXT,
+    prose TEXT,
+
+    switch_type TEXT,
+    feel TEXT,
+    actuation_force TEXT,
+    travel_distance TEXT,
+    pins INTEGER,
+    factory_lubed BOOLEAN,
+
+    raw_specifications JSONB
+);
