@@ -1,19 +1,21 @@
 from playwright.sync_api import sync_playwright
-from datetime import datetime, timezone
+
+from src.database.repo.keebfinder_repo import save_keyboards
 
 BASE_URL = "https://keeb-finder.com"
 
-def get_keyboard_links() -> list[dict]:
+def scrape_keyboards() -> list[dict]:
+
     print(f"Extracting product links from {BASE_URL}")
     keyboard_list = []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch()
 
         page = browser.new_page()
         page_number = 1
 
-        while page_number < 2:
+        while page_number < 49:
             full_URL = f"{BASE_URL}/keyboards?page={page_number}"
             page.goto(full_URL)
             
@@ -29,11 +31,26 @@ def get_keyboard_links() -> list[dict]:
                 spec_divs = keyboard_div.locator('div.inline.text-body2-md')
 
                 profile = mount = None
-                wired = wireless = hotswap = rgb = white_led = knob = hall_effect = rapid_trigger = metal_case = qmk = via = False
+
+                wired = None
+                wireless = None
+                hotswap = None
+                rgb = None
+                white_led = None
+                knob = None
+                hall_effect = None
+                rapid_trigger = None
+                metal_case = None
+                qmk = None
+                via = None
+
+                raw_specs = []
                 
                 for j in range(spec_divs.count()):
                     spec_div = spec_divs.nth(j)
                     spec = spec_div.inner_text()
+
+                    raw_specs.append(spec)
                     
                     if "%" in spec:
                         profile = spec
@@ -67,10 +84,8 @@ def get_keyboard_links() -> list[dict]:
                         qmk = True
                     
                 keyboard = {
-                    "source": "keebfinder",
                     "source_url": kf_link,
                     "vendor_url" : v_link,
-                    "extracted_at": datetime.now(timezone.utc).isoformat(),
 
                     "title": title,
                     "price": None,
@@ -86,11 +101,19 @@ def get_keyboard_links() -> list[dict]:
                     "metal_case": metal_case,
                     "mount": mount,
                     "via_support": via,
-                    "qmk_support": qmk
+                    "qmk_support": qmk,
+
+                    "raw_specifications": raw_specs
                 }
 
                 keyboard_list.append(keyboard)
             page_number += 1
         browser.close()
-    print(f"Keyboard Count: {len(keyboard_list)}")
+    print(f"Keyboards Collected: {len(keyboard_list)}")
+
+    save_keyboards(keyboard_list)
+
     return list(keyboard_list)
+
+
+scrape_keyboards()

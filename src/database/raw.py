@@ -6,7 +6,7 @@ def create_scrape_run(conn, source):
             """
             INSERT INTO raw.scrape_runs (source)
             VALUES (%s)
-            RETURNING id:
+            RETURNING id;
             """,
             (source,),
         )
@@ -18,6 +18,7 @@ def create_source_record(
         scrape_run_id,
         record_type,
         source_url,
+        vendor_url,
         source_product_id,
         title,
         price,
@@ -31,6 +32,7 @@ def create_source_record(
                 scrape_run_id,
                 record_type,
                 source_url,
+                vendor_url,
                 source_product_id,
                 title,
                 price,
@@ -38,14 +40,18 @@ def create_source_record(
                 raw_specifications
             )
             VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
+            ON CONFLICT (scrape_run_id, source_url)
+            DO UPDATE SET
+                title = EXCLUDED.title
             RETURNING id;
             """,
             (
                 scrape_run_id,
                 record_type,
                 source_url,
+                vendor_url,
                 source_product_id,
                 title,
                 price,
@@ -57,7 +63,7 @@ def create_source_record(
         return cursor.fetchone()[0]
 
 def complete_scrape_run(conn, scrape_run_id, records_found):
-    with conn.cursor as cursor:
+    with conn.cursor() as cursor:
         cursor.execute(
             """
             UPDATE raw.scrape_runs
@@ -74,7 +80,7 @@ def complete_scrape_run(conn, scrape_run_id, records_found):
         )
 
 def fail_scrape_run(conn, scrape_run_id, error_message):
-    with conn.cursor as cursor:
+    with conn.cursor() as cursor:
         cursor.execute(
             """
             UPDATE raw.scrape_runs

@@ -31,6 +31,7 @@ CREATE TABLE raw.source_records (
     record_type TEXT NOT NULL,
 
     source_url TEXT NOT NULL,
+    vendor_url TEXT,
     source_product_id TEXT,
 
     extracted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -52,7 +53,10 @@ CREATE TABLE raw.source_records (
             'keycap',
             'keyboard'
         )
-    )
+    ), 
+
+    CONSTRAINT source_records_run_url_unique
+        UNIQUE(scrape_run_id, source_url)
 );
 
 
