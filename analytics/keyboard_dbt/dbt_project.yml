@@ -1,0 +1,19 @@
+# analytics/keyboard_dbt/dbt_project.yml
+
+name: "keyboard_dbt"
+version: "1.0.0"
+config-version: 2
+
+profile: "keyboard_dbt"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+models:
+  keyboard_dbt:
+    staging:
+      +materialized: view
+
+    silver:
+      +materialized: table

@@ -3,6 +3,7 @@
 DROP TABLE IF EXISTS raw.keebarchive_switches;
 DROP TABLE IF EXISTS raw.keebarchive_keycaps;
 DROP TABLE IF EXISTS raw.keebfinder_keyboards;
+DROP TABLE IF EXISTS raw.reddit_posts;
 DROP TABLE IF EXISTS raw.source_records;
 DROP TABLE IF EXISTS raw.scrape_runs;
 
@@ -110,4 +111,29 @@ CREATE TABLE raw.keebfinder_keyboards (
     CONSTRAINT keebfinder_keyboards_record_fk
         FOREIGN KEY (record_id)
         REFERENCES raw.source_records(id)
+);
+
+CREATE TABLE raw.reddit_posts (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    scrape_run_id BIGINT NOT NULL,
+
+    post_url TEXT NOT NULL,
+    extracted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    subreddit TEXT NOT NULL,
+    source_post_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT,
+    author TEXT,
+    created_at TIMESTAMPTZ,
+    gallery_images JSONB,
+    author_comments JSONB,
+
+    CONSTRAINT reddit_posts_scrape_run_fk
+        FOREIGN KEY (scrape_run_id)
+        REFERENCES raw.scrape_runs(id),
+
+    CONSTRAINT reddit_posts_run_post_unique
+        UNIQUE (scrape_run_id, source_post_id)
 );

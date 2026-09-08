@@ -24,10 +24,12 @@ def create_switch_record(
                 switch_type,
                 feel,
                 actuation_force,
-                travel
+                travel_distance,
+                pins,
+                factory_lubed
             )
             VALUES (
-                %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s
             )
             ON CONFLICT (record_id)
             DO NOTHING;
@@ -62,7 +64,7 @@ def create_keycap_record(
                 artisan
             )
             VALUES (
-                %s, %s, %s, %s, $s,
+                %s, %s, %s, %s, %s
             )
             ON CONFLICT (record_id)
             DO NOTHING;

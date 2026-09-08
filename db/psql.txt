@@ -1,5 +1,7 @@
 docker exec -it keyboard-postgres psql -U keyboard_admin -d keyboard_db
 
+docker compose up -d
+
 \dt schema.*
 \d schema.table
 

@@ -110,6 +110,8 @@ def extract_switch_data() -> list[dict]:
             prose = (prose_locator.inner_text().strip() if prose_locator.count() > 0 else None)
 
             switch_type = feel = actuation = travel_dist = pins = fac_lubed = None
+
+            raw_specs = []
             
             for i in range(tech_spec_divs.count()):
                 spec_div = tech_spec_divs.nth(i)
@@ -119,19 +121,23 @@ def extract_switch_data() -> list[dict]:
                     continue
 
                 spec = spans.nth(0).inner_text()
+                value = spans.nth(1).inner_text().strip()
                 
                 if spec == "Switch Type":
-                    switch_type = spans.nth(1).inner_text().strip()
+                    switch_type = value
                 elif spec == "Feel":
-                    feel = spans.nth(1).inner_text().strip()
+                    feel = value
                 elif spec == "Actuation Force":
-                    actuation = spans.nth(1).inner_text().strip()
+                    actuation = value
                 elif spec == "Travel Distance":
-                    travel_dist = spans.nth(1).inner_text().strip()
+                    travel_dist = value
                 elif spec == "Pins":
-                    pins = spans.nth(1).inner_text().strip()
+                    pins_text = spans.nth(1).inner_text().strip()
+                    pins = int(pins_text)
                 elif spec == "Factory Lubed":
                     fac_lubed = spans.nth(1).locator("svg.lucide-check").count() > 0
+
+                raw_specs.append(value)
 
             switch = {
                 "source": "keebarchive",
@@ -147,11 +153,16 @@ def extract_switch_data() -> list[dict]:
                 "travel_distance" : travel_dist,
                 "pins" : pins,
                 "factory_lubed": fac_lubed,
+
+                "raw_specifications": raw_specs
             }
 
             switches.append(switch)
         browser.close()
     print(f"Switch Count: {len(switches)}")
+
+    save_switches(switches)
+
     return switches
 
 def extract_keycap_data() -> list[dict]:
@@ -189,6 +200,8 @@ def extract_keycap_data() -> list[dict]:
             
             prose_locator = page.locator('div.prose')
             prose = (prose_locator.inner_text().strip() if prose_locator.count() > 0 else None)
+
+            raw_specs = []
             
             for i in range(tech_spec_divs.count()):
                 spec_div = tech_spec_divs.nth(i)
@@ -198,14 +211,16 @@ def extract_keycap_data() -> list[dict]:
                     continue
 
                 spec = spans.nth(0).inner_text()
+                value = spans.nth(1).inner_text().strip()
                 
                 if material is None and spec == "Material":
-                    material = spans.nth(1).inner_text().strip()
+                    material = value
                 elif spec == "Profile":
-                    profile = spans.nth(1).inner_text().strip()
+                    profile = value
                 elif spec == "Keys":
-                    number_of_keys = spans.nth(1).inner_text().strip()
+                    number_of_keys = value
                 
+                raw_specs.append(value)
 
             keycap = {
                 "source": "keebarchive",
@@ -218,16 +233,21 @@ def extract_keycap_data() -> list[dict]:
                 "material": material,
                 "profile": profile,
                 "number_of_keys" : number_of_keys,
-                "artisan": artisan
+                "artisan": artisan,
+
+                "raw_specifications": raw_specs
             }
 
             keycaps.append(keycap)
-            i += 1
         browser.close()
     print(f"Keycap Count: {len(keycaps)}")
+
+    save_keycaps(keycaps)
+
     return keycaps
 
-
+extract_keycap_data()
+extract_switch_data()
             
 
 
