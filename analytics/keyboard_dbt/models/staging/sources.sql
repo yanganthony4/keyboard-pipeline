@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+
+    tables:
+      - name: keebarchive_switches
+      - name: keebarchive_keycaps
+      - name: keebfinder_keyboards
+      - name: reddit_posts
