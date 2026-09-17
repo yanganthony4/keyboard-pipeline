@@ -5,6 +5,7 @@ sources:
     schema: raw
 
     tables:
+      - name: source_records
       - name: keebarchive_switches
       - name: keebarchive_keycaps
       - name: keebfinder_keyboards

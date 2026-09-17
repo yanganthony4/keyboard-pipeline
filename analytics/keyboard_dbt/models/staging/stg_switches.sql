@@ -2,7 +2,7 @@ select
     s.record_id,
 
     trim(r.title) as title,
-    lower(trim(r.title)) as normalized_title,
+    {{ normalize_product_name('r.title') }} as normalized_title,
 
     r.scrape_run_id,
     r.source_url,
@@ -12,6 +12,10 @@ select
 
     nullif(lower(trim(r.price)), '') as price_text,
     ((regexp_match(r.price, '([0-9]+(?:\.[0-9]+)?)'))[1])::numeric as price_amount,
+    case
+        when nullif(trim(r.price), '') is not null then 'USD'
+        else null
+    end as price_currency,
 
     nullif(trim(r.prose), '') as prose,
 
@@ -28,8 +32,9 @@ select
     ((regexp_match(s.travel_distance,'([0-9]+(?:\.[0-9]+)?)'))[1])::numeric as travel_distance_mm,
     
     s.pins, 
-    s.factory_lubed,
+    s.factory_lubed
 from {{ source('raw', 'keebarchive_switches') }} as s
 join {{ source('raw', 'source_records') }} as r
     on s.record_id = r.id
 where nullif(trim(r.title), '') is not null
+    and r.record_type = 'switch'
