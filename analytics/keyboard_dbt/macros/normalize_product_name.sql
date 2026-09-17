@@ -2,12 +2,16 @@
 
 trim(
     regexp_replace(
-        lower({{ column_name }}),
-        '[^a-z0-9]+',
+        regexp_replace(
+            lower({{ column_name }}),
+            '[^a-z0-9]+',
+            ' ',
+            'g'
+        ),
+        '\s+',
         ' ',
         'g'
     )
 )
 
 {% endmacro %}
-
