@@ -1,25 +1,58 @@
 select
-    id,
-    post_url,
-    
-    subreddit,
-    source_post_id,
-    
-    regexp_replace(trim(title), '\s+', ' ', 'g') as title,
-    trim(body) as body_text,
+    r.id,
+    r.post_url,
+
+    r.subreddit,
+    r.source_post_id,
+
+    regexp_replace(
+        trim(r.title),
+        '\s+',
+        ' ',
+        'g'
+    ) as title,
+
+    trim(r.body) as body_text,
+
     nullif(
         regexp_replace(
-            trim(body),
+            trim(r.body),
             '\s+',
             ' ',
             'g'
         ),
         ''
     ) as body,
-    author,
-    created_at,
-    gallery_images,
-    author_comments
-from {{ source('raw', 'reddit_posts') }} 
 
-    
+    r.author,
+    r.created_at,
+    r.gallery_images,
+    r.author_comments,
+
+    lower(
+        regexp_replace(
+            trim(
+                concat_ws(
+                    ' ',
+                    r.title,
+                    r.body,
+                    comments.comment_text
+                )
+            ),
+            '\s+',
+            ' ',
+            'g'
+        )
+    ) as normalized_searchable_text
+
+from {{ source('raw', 'reddit_posts') }} as r
+
+left join lateral (
+
+    select
+        string_agg(comment, ' ') as comment_text
+
+    from jsonb_array_elements_text(r.author_comments) as comment
+
+) as comments
+    on true
