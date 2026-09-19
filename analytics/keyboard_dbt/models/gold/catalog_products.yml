@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: catalog_products
+
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - switch
+                  - keycap
+                  - keyboard
+
+      - name: title
+        data_tests:
+          - not_null
+
+      - name: specifications
+        data_tests:
+          - not_null
+
+      - name: community_builds
+        data_tests:
+          - not_null

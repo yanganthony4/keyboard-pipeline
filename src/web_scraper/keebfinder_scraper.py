@@ -24,7 +24,7 @@ def scrape_keyboards() -> list[dict]:
 
             for i in range(keyboard_divs.count()):
                 keyboard_div = keyboard_divs.nth(i)
-                kf_link = keyboard_div.locator('a.mb-1.font-h4.text-h4-md').get_attribute("href")
+                kf_link = BASE_URL + keyboard_div.locator('a.mb-1.font-h4.text-h4-md').get_attribute("href")
                 title = keyboard_div.locator('a.mb-1.font-h4.text-h4-md').inner_text()
                 v_link = keyboard_div.locator('a.underline.overflow-hidden.whitespace-nowrap').get_attribute("href")
 
