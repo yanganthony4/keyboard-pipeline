@@ -13,6 +13,7 @@ with reddit_posts as (
 )
 
 select
+    r.scrape_run_id,
     r.id,
     r.post_url,
 

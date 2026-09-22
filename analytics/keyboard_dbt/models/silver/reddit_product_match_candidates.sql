@@ -1,9 +1,23 @@
+{{ config(
+    materialized='incremental',
+    unique_key=['source_post_id', 'product_id'],
+    incremental_strategy='delete+insert'
+) }}
+
+{% set scrape_run_id = var('scrape_run_id', none) %}
+
 with posts as (
     select
         source_post_id,
         post_url,
         normalized_searchable_text
     from {{ ref('reddit_search_documents') }}
+
+    {% if scrape_run_id is not none %}
+
+    where scrape_run_id = {{ scrape_run_id }}
+
+    {% endif %}
 ),
 
 aliases as (
@@ -19,6 +33,7 @@ aliases as (
 candidates as (
     select
         p.source_post_id,
+        p.scrape_run_id,
         p.post_url,
         a.product_id,
         a.product_type,
