@@ -1,3 +1,17 @@
+with reddit_posts as (
+
+    select
+        r.*,
+
+        row_number() over (
+            partition by r.source_post_id
+            order by r.extracted_at desc, r.id desc
+        ) as row_num
+
+    from {{ source('raw', 'reddit_posts') }} as r
+
+)
+
 select
     r.id,
     r.post_url,
@@ -45,8 +59,7 @@ select
         )
     ) as normalized_searchable_text
 
-from {{ source('raw', 'reddit_posts') }} as r
-
+from reddit_posts as r
 left join lateral (
 
     select
@@ -56,3 +69,4 @@ left join lateral (
 
 ) as comments
     on true
+where r.row_num = 1

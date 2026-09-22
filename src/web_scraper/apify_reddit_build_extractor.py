@@ -208,14 +208,14 @@ def fetch_recent_posts(
 if __name__ == "__main__":
 
     # Normal daily pipeline
-    # fetch_recent_posts(
-    #     max_results=100
-    # )
-
+    fetch_recent_posts(
+        max_results=100
+    )
+    
     # Historical/backfill example:
     #
-    fetch_posts_by_date(
-        max_results=5,
-        date_from="2026-09-01",
-        date_to="2026-09-02"
-    )
+    # fetch_posts_by_date(
+    #     max_results=5,
+    #     date_from="2026-09-01",
+    #     date_to="2026-09-02"
+    # )
