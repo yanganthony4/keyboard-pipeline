@@ -152,18 +152,18 @@ def process_run(run) -> list[dict]:
         f"{len(normalized_posts)}"
     )
 
-    save_mk_reddit_posts(
+    scrape_run_id = save_mk_reddit_posts(
         normalized_posts
     )
 
-    return normalized_posts
+    return scrape_run_id
 
 
 def fetch_posts_by_date(
     max_results,
     date_from,
     date_to
-) -> list[dict]:
+) -> int:
 
     print(
         f"Fetching Reddit posts from "
@@ -184,9 +184,9 @@ def fetch_posts_by_date(
     return process_run(run)
 
 
-def fetch_recent_posts(
+def fetch_recent_posts_day(
     max_results=100
-) -> list[dict]:
+) -> int:
 
     print(
         "Fetching Reddit posts "
@@ -203,19 +203,3 @@ def fetch_recent_posts(
     )
 
     return process_run(run)
-
-
-if __name__ == "__main__":
-
-    # Normal daily pipeline
-    fetch_recent_posts(
-        max_results=100
-    )
-    
-    # Historical/backfill example:
-    #
-    # fetch_posts_by_date(
-    #     max_results=5,
-    #     date_from="2026-09-01",
-    #     date_to="2026-09-02"
-    # )

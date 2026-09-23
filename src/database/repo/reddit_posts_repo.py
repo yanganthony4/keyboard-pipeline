@@ -86,10 +86,9 @@ def save_mk_reddit_posts(reddit_posts):
                 scrape_run_id,
                 len(reddit_posts)
             )
-
+            print(f"Stored scrape {scrape_run_id}: reddit")
             conn.commit()
-
-            return True
+            return scrape_run_id
     
         except Exception as error:
             conn.rollback()
