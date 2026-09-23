@@ -1,0 +1,17 @@
+docker exec -it keyboard-postgres psql -U keyboard_admin -d keyboard_db
+
+docker compose up -d
+
+\dt schema.*
+\d schema.table
+
+SELECT
+    sr.id,
+    sr.title,
+    sr.price,
+    sr.extracted_at,
+    k.hotswap,
+    k.metal_case
+FROM raw.source_records AS sr
+JOIN raw.keebfinder_keyboards AS k
+    ON sr.id = k.record_id;

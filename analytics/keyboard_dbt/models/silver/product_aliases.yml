@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: product_aliases
+
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('products')
+                field: product_id
+
+      - name: product_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - switch
+                  - keycap
+                  - keyboard
+
+      - name: canonical_title
+        data_tests:
+          - not_null
+
+      - name: alias
+        data_tests:
+          - not_null
+
+      - name: alias_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - canonical
+                  - generated
+                  - manual

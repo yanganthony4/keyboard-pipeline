@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: community_builds
+
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: source_post_id
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('stg_reddit_posts')
+                field: source_post_id
+
+      - name: post_url
+        data_tests:
+          - not_null
+
+      - name: title
+        data_tests:
+          - not_null
+
+      - name: keyboards
+        data_tests:
+          - not_null
+
+      - name: switches
+        data_tests:
+          - not_null
+
+      - name: keycaps
+        data_tests:
+          - not_null

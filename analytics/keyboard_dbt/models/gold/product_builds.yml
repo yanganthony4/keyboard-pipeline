@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: product_builds
+
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('catalog_products')
+                field: product_id
+
+      - name: source_post_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('community_builds')
+                field: source_post_id
+
+      - name: match_score
+        data_tests:
+          - not_null
